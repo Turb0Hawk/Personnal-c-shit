@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace L5RDiceRoller
 {
     class Dee
     {
-        private static String[] resultatsPossibleD6 = { "rien", "Opportunité + Strife", "Opportunité", "Succès + Strife",
+        private static string[] resultatsPossibleD6 = { "rien", "Opportunité + Strife", "Opportunité", "Succès + Strife",
             "Succès", "Succès explosif + Strife" };
-        private static String[] resultatsPossibleD12 = { "rien", "rien", "Opportunité", "Opportunité", "Opportunité",
+        private static string[] resultatsPossibleD12 = { "rien", "rien", "Opportunité", "Opportunité", "Opportunité",
             "Succès + Strife", "Succès + Strife", "Succès", "Succès", "Succès + Opportunité", "Succès + Opportunité",
             "Succès explosif + Strife", "Succès explosif" };
         //6 pour d6 11 et 12 pour d12
 
         private int resultat;
         private int typeDee;
-        private String resultDee = "";
+        private string resultDee = "";
+        private Random rdm = new Random();
+        private static RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
 
         public Dee()
         {
@@ -28,25 +31,28 @@ namespace L5RDiceRoller
         {
 
             this.typeDee = typeDee;
-            rollDee();
+            this.resultDee = rollDee(this.resultDee);
         }
 
-        void rollDee()
+        string rollDee(string result)
         {
-            Random rdm = new Random();
-            this.resultat = rdm.Next(this.typeDee);
+            
+            //this.resultat = this.rdm.Next(this.typeDee);
+            int resultatDee = rngCsp.
             if (this.typeDee == 6)
             {
-                this.resultDee += this.resultat + " " + resultatsPossibleD6[this.resultat];
+                result += " " + resultatsPossibleD6[this.resultat];
             }
             else
             {
-                this.resultDee = this.resultat + " " + resultatsPossibleD12[this.resultat];
+                result += " " + resultatsPossibleD12[this.resultat];
             }
-            if ((this.typeDee == 6 && this.resultat == 6) || (this.typeDee == 12 && this.resultat >= 11))
+            if ((this.typeDee == 6 && this.resultat+1 == 6) || (this.typeDee == 12 && this.resultat+1 >= 11))
             {
-                rollDee();
+                result += " + ";
+                result = rollDee(result);
             }
+            return result;
         }
 
         public override string ToString()
